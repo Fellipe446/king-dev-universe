@@ -3,190 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KING DEV UNIVERSE | PRO BUILDER</title>
+    <title>KING DEV UNIVERSE | V5.0 PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; }
         .bg-grid { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 30px 30px; }
-        .scratch-block { padding: 12px; margin: 8px; border-radius: 8px 24px 24px 8px; color: white; font-weight: bold; font-size: 12px; cursor: pointer; border-left: 10px solid rgba(0,0,0,0.2); transition: 0.3s; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
-        .scratch-block:hover { transform: translateX(8px); filter: brightness(1.1); }
-        .element-selected { outline: 3px solid #4c97ff; outline-offset: 4px; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .scratch-block { padding: 10px; margin: 5px 0; border-radius: 6px 20px 20px 6px; color: white; font-weight: bold; font-size: 11px; cursor: pointer; border-left: 8px solid rgba(0,0,0,0.2); transition: 0.2s; }
+        .scratch-block:hover { transform: translateX(5px); filter: brightness(1.1); }
+        .element-selected { outline: 3px solid #4c97ff; outline-offset: 3px; z-index: 100 !important; }
+        .canvas-mobile { width: 375px; height: 812px; border-radius: 40px; }
+        .canvas-desktop { width: 95%; height: 95%; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-[#f1f5f9] h-screen flex flex-col overflow-hidden">
 
-    <header class="h-14 bg-[#4c97ff] flex items-center px-6 justify-between text-white shadow-2xl z-50">
+    <header class="h-14 bg-[#4c97ff] flex items-center px-6 justify-between text-white shadow-xl z-50">
         <div class="flex items-center gap-3">
-            <div class="bg-white p-1.5 rounded-lg shadow-inner"><i data-lucide="crown" class="text-[#4c97ff] w-5 h-5"></i></div>
+            <div class="bg-white p-1 rounded-lg"><i data-lucide="crown" class="text-[#4c97ff] w-5 h-5"></i></div>
             <span class="font-black tracking-tighter text-lg uppercase">King Dev Academy</span>
         </div>
-        <div class="flex items-center gap-4">
-            <div class="flex bg-white/10 rounded-full p-1 px-3 gap-2">
-                <button onclick="resize('mobile')" class="p-1 hover:bg-white/20 rounded"><i data-lucide="smartphone" class="w-4 h-4"></i></button>
-                <button onclick="resize('desktop')" class="p-1 hover:bg-white/20 rounded"><i data-lucide="monitor" class="w-4 h-4"></i></button>
-            </div>
-            <button onclick="exportProject()" class="bg-orange-500 hover:bg-orange-600 px-6 py-2 rounded-full text-xs font-black shadow-lg transition-all active:scale-95">EXPORTAR PROJETO</button>
+        <div class="flex gap-4">
+            <button onclick="resize('mobile')" class="hover:bg-white/20 p-2 rounded-lg"><i data-lucide="smartphone" class="w-5 h-5"></i></button>
+            <button onclick="resize('desktop')" class="hover:bg-white/20 p-2 rounded-lg"><i data-lucide="monitor" class="w-5 h-5"></i></button>
+            <button onclick="exportProject()" class="bg-orange-500 hover:bg-orange-600 px-6 py-2 rounded-full text-xs font-black shadow-lg transition-all active:scale-95">EXPORTAR FINAL 🚀</button>
         </div>
     </header>
 
     <main class="flex flex-1 overflow-hidden">
-        <aside class="w-72 bg-white border-r border-gray-200 shadow-xl flex flex-col z-40">
-            <div class="p-4 bg-slate-50 border-b font-black text-[10px] text-slate-400 tracking-[0.2em]">FERRAMENTAS SCRATCH</div>
-            <div class="p-4 space-y-6 overflow-y-auto">
+        <aside class="w-72 bg-white border-r border-gray-200 shadow-xl flex flex-col z-40 overflow-y-auto">
+            <div class="p-4 bg-slate-50 border-b font-black text-[10px] text-slate-400 tracking-widest uppercase">Toolbox V2.0</div>
+            <div class="p-4 space-y-6">
                 <section>
-                    <h4 class="text-blue-500 font-black text-[11px] mb-3 uppercase flex items-center gap-2"><i data-lucide="layout" class="w-3 h-3"></i> Estrutura</h4>
-                    <div class="scratch-block bg-[#4c97ff]" onclick="addElement('div')">Criar Container</div>
-                    <div class="scratch-block bg-[#4c97ff]" onclick="addElement('button')">Criar Botão King</div>
+                    <h4 class="text-blue-500 font-black text-[10px] mb-2 uppercase">Básicos</h4>
+                    <div class="scratch-block bg-[#4c97ff]" onclick="addElement('h1')">Título H1</div>
+                    <div class="scratch-block bg-[#4c97ff]" onclick="addElement('p')">Parágrafo</div>
+                    <div class="scratch-block bg-[#4c97ff]" onclick="addElement('button')">Botão CTA</div>
                 </section>
                 <section>
-                    <h4 class="text-purple-500 font-black text-[11px] mb-3 uppercase flex items-center gap-2"><i data-lucide="type" class="w-3 h-3"></i> Tipografia</h4>
-                    <div class="scratch-block bg-[#9966ff]" onclick="addElement('h2')">Adicionar Título</div>
-                    <div class="scratch-block bg-[#9966ff]" onclick="addElement('p')">Adicionar Parágrafo</div>
+                    <h4 class="text-purple-500 font-black text-[10px] mb-2 uppercase">Mídia & Interação</h4>
+                    <div class="scratch-block bg-[#9966ff]" onclick="addElement('img')">Imagem URL</div>
+                    <div class="scratch-block bg-[#9966ff]" onclick="addElement('video')">Vídeo Embed</div>
+                    <div class="scratch-block bg-[#9966ff]" onclick="addElement('input')">Campo de Texto</div>
                 </section>
                 <section>
-                    <h4 class="text-orange-500 font-black text-[11px] mb-3 uppercase flex items-center gap-2"><i data-lucide="image" class="w-3 h-3"></i> Mídia</h4>
-                    <div class="scratch-block bg-[#ffab19]" onclick="addElement('img')">Inserir Imagem URL</div>
-                </div>
+                    <h4 class="text-orange-500 font-black text-[10px] mb-2 uppercase">Layout</h4>
+                    <div class="scratch-block bg-[#ffab19]" onclick="addElement('div')">Container (Box)</div>
+                    <div class="scratch-block bg-[#ffab19]" onclick="addElement('hr')">Linha Divisória</div>
+                </section>
             </div>
         </aside>
 
-        <section class="flex-1 bg-slate-200 relative overflow-auto flex items-center justify-center bg-grid p-10">
-            <div id="canvas" class="bg-white w-[375px] h-[812px] rounded-[40px] shadow-[0_0_100px_rgba(0,0,0,0.2)] relative border-[10px] border-slate-900 overflow-hidden transition-all duration-500">
+        <section class="flex-1 bg-slate-200 relative overflow-auto flex items-center justify-center bg-grid p-4">
+            <div id="canvas" class="bg-white canvas-mobile shadow-2xl relative border-[10px] border-slate-900 overflow-hidden transition-all duration-500">
                 </div>
         </section>
 
-        <aside class="w-80 bg-white border-l border-gray-200 p-6 z-40">
-            <div id="inspector-ui" class="hidden">
-                <h3 class="font-black text-slate-800 text-sm mb-6 flex items-center gap-2 border-b pb-4"><i data-lucide="sliders" class="text-blue-500"></i> PROPRIEDADES</h3>
+        <aside class="w-80 bg-white border-l border-gray-200 p-6 z-40 overflow-y-auto">
+            <div id="inspector-ui" class="hidden space-y-6">
+                <h3 class="font-black text-slate-800 text-sm border-b pb-4">ESTILIZAÇÃO</h3>
                 
-                <div class="space-y-5">
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase">Conteúdo / Texto</label>
-                        <input type="text" id="prop-text" oninput="updateElement()" class="w-full bg-slate-50 border-slate-200 border rounded-lg p-3 text-sm focus:ring-2 ring-blue-500 outline-none">
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-[10px] font-black text-slate-400 uppercase">Fundo</label>
-                            <input type="color" id="prop-bg" oninput="updateElement()" class="w-full h-12 rounded-lg cursor-pointer border-none shadow-sm">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-black text-slate-400 uppercase">Texto</label>
-                            <input type="color" id="prop-color" oninput="updateElement()" class="w-full h-12 rounded-lg cursor-pointer border-none shadow-sm">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase">Arredondamento</label>
-                        <input type="range" id="prop-radius" min="0" max="100" oninput="updateElement()" class="w-full accent-blue-500">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase">Sombra (Glow)</label>
-                        <input type="range" id="prop-shadow" min="0" max="50" oninput="updateElement()" class="w-full accent-blue-500">
-                    </div>
-                    <button onclick="deleteElement()" class="w-full py-3 mt-4 bg-red-50 text-red-500 rounded-xl text-xs font-black hover:bg-red-500 hover:text-white transition-all uppercase tracking-widest">Remover Elemento</button>
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase">Texto / URL</label>
+                    <input type="text" id="prop-text" oninput="update()" class="w-full bg-slate-50 border rounded-lg p-2 text-sm outline-none">
                 </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase">Fundo</label>
+                        <input type="color" id="prop-bg" oninput="update()" class="w-full h-10 rounded cursor-pointer">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-black text-slate-400 uppercase">Texto</label>
+                        <input type="color" id="prop-color" oninput="update()" class="w-full h-10 rounded cursor-pointer">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase block mb-1">Tamanho da Fonte (px)</label>
+                    <input type="number" id="prop-fontsize" oninput="update()" class="w-full border rounded-lg p-2 text-sm">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase block mb-1">Arredondamento</label>
+                    <input type="range" id="prop-radius" min="0" max="100" oninput="update()" class="w-full accent-blue-500">
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-black text-slate-400 uppercase block mb-1">Opacidade</label>
+                    <input type="range" id="prop-opacity" min="0" max="100" value="100" oninput="update()" class="w-full accent-blue-500">
+                </div>
+
+                <button onclick="remove()" class="w-full py-3 bg-red-50 text-red-500 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white transition-all uppercase">Excluir Elemento</button>
             </div>
-            <div id="no-selection" class="flex flex-col items-center justify-center h-full opacity-30 text-center">
-                <i data-lucide="mouse-pointer-2" class="w-12 h-12 mb-4"></i>
-                <p class="text-sm font-bold">Selecione algo para editar</p>
+            <div id="no-sel" class="flex flex-col items-center justify-center h-full opacity-20 text-center">
+                <i data-lucide="settings" class="w-12 h-12 mb-2 animate-spin-slow"></i>
+                <p class="text-xs font-bold uppercase tracking-widest">Aguardando Seleção</p>
             </div>
         </aside>
     </main>
 
-    <script>
-        lucide.createIcons();
-        let project = { elements: [], selectedId: null };
-
-        function addElement(type) {
-            const el = {
-                id: 'king-' + Date.now(),
-                type: type,
-                text: type === 'button' ? 'Assinar Agora' : (type === 'h2' ? 'Novo Título' : 'Clique para editar'),
-                x: 37, y: 100, w: 300, h: 60,
-                bg: type === 'button' ? '#4c97ff' : '#f8fafc',
-                color: type === 'button' ? '#ffffff' : '#0f172a',
-                radius: 15, shadow: 10
-            };
-            project.elements.push(el);
-            render();
-            selectElement(el.id);
-        }
-
-        function render() {
-            const canvas = document.getElementById('canvas');
-            canvas.innerHTML = '';
-            project.elements.forEach(el => {
-                const dom = document.createElement(el.type === 'button' ? 'button' : 'div');
-                dom.id = el.id;
-                dom.className = `absolute flex items-center justify-center transition-all ${project.selectedId === el.id ? 'element-selected' : ''}`;
-                dom.style.cssText = `
-                    left: ${el.x}px; top: ${el.y}px; width: ${el.w}px; height: ${el.h}px;
-                    background: ${el.bg}; color: ${el.color}; border-radius: ${el.radius}px;
-                    font-weight: bold; border: none; font-size: 14px; cursor: move;
-                    box-shadow: 0 ${el.shadow/2}px ${el.shadow}px ${el.bg}44;
-                `;
-                dom.innerText = el.text;
-                dom.onmousedown = (e) => startDrag(e, el);
-                canvas.appendChild(dom);
-            });
-        }
-
-        function startDrag(e, el) {
-            selectElement(el.id);
-            const canvasRect = document.getElementById('canvas').getBoundingClientRect();
-            let shiftX = e.clientX - canvasRect.left - el.x;
-            let shiftY = e.clientY - canvasRect.top - el.y;
-
-            document.onmousemove = (e) => {
-                el.x = e.clientX - canvasRect.left - shiftX;
-                el.y = e.clientY - canvasRect.top - shiftY;
-                render();
-            };
-            document.onmouseup = () => document.onmousemove = null;
-        }
-
-        function selectElement(id) {
-            project.selectedId = id;
-            const el = project.elements.find(e => e.id === id);
-            document.getElementById('no-selection').classList.add('hidden');
-            document.getElementById('inspector-ui').classList.remove('hidden');
-            
-            document.getElementById('prop-text').value = el.text;
-            document.getElementById('prop-bg').value = el.bg;
-            document.getElementById('prop-color').value = el.color;
-            document.getElementById('prop-radius').value = el.radius;
-            document.getElementById('prop-shadow').value = el.shadow;
-            render();
-        }
-
-        function updateElement() {
-            const el = project.elements.find(e => e.id === project.selectedId);
-            el.text = document.getElementById('prop-text').value;
-            el.bg = document.getElementById('prop-bg').value;
-            el.color = document.getElementById('prop-color').value;
-            el.radius = document.getElementById('prop-radius').value;
-            el.shadow = document.getElementById('prop-shadow').value;
-            render();
-        }
-
-        function deleteElement() {
-            project.elements = project.elements.filter(e => e.id !== project.selectedId);
-            project.selectedId = null;
-            document.getElementById('inspector-ui').classList.add('hidden');
-            document.getElementById('no-selection').classList.remove('hidden');
-            render();
-        }
-
-        function resize(mode) {
-            const c = document.getElementById('canvas');
-            if(mode === 'mobile') { c.style.width = '375px'; c.style.height = '812px'; c.style.borderRadius = '40px'; }
-            else { c.style.width = '90%'; c.style.height = '90%'; c.style.borderRadius = '10px'; }
-        }
-
-        function exportProject() { alert("🚀 King Dev Universe Compilando seu código final..."); }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
