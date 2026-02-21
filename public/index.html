@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KING DEV UNIVERSE | V5.0 PRO</title>
+    <title>KING DEV UNIVERSE | V5.0 INTELLIGENCE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -13,8 +13,7 @@
         .scratch-block { padding: 10px; margin: 5px 0; border-radius: 6px 20px 20px 6px; color: white; font-weight: bold; font-size: 11px; cursor: pointer; border-left: 8px solid rgba(0,0,0,0.2); transition: 0.2s; }
         .scratch-block:hover { transform: translateX(5px); filter: brightness(1.1); }
         .element-selected { outline: 3px solid #4c97ff; outline-offset: 3px; z-index: 100 !important; }
-        .canvas-mobile { width: 375px; height: 812px; border-radius: 40px; }
-        .canvas-desktop { width: 95%; height: 95%; border-radius: 10px; }
+        .logic-panel { background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px; border-radius: 8px; margin-top: 10px; }
     </style>
 </head>
 <body class="bg-[#f1f5f9] h-screen flex flex-col overflow-hidden">
@@ -24,82 +23,74 @@
             <div class="bg-white p-1 rounded-lg"><i data-lucide="crown" class="text-[#4c97ff] w-5 h-5"></i></div>
             <span class="font-black tracking-tighter text-lg uppercase">King Dev Academy</span>
         </div>
-        <div class="flex gap-4">
-            <button onclick="resize('mobile')" class="hover:bg-white/20 p-2 rounded-lg"><i data-lucide="smartphone" class="w-5 h-5"></i></button>
-            <button onclick="resize('desktop')" class="hover:bg-white/20 p-2 rounded-lg"><i data-lucide="monitor" class="w-5 h-5"></i></button>
-            <button onclick="exportProject()" class="bg-orange-500 hover:bg-orange-600 px-6 py-2 rounded-full text-xs font-black shadow-lg transition-all active:scale-95">EXPORTAR FINAL 🚀</button>
+        <div class="flex items-center gap-6">
+            <div id="status-ia" class="flex items-center gap-2 text-[10px] font-bold bg-blue-600 px-3 py-1 rounded-full">
+                <span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span></span>
+                IA ANALISANDO LAYOUT...
+            </div>
+            <button onclick="saveOnRender()" class="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded-full text-xs font-black shadow-lg transition-all">SALVAR NA NUVEM ☁️</button>
         </div>
     </header>
 
     <main class="flex flex-1 overflow-hidden">
         <aside class="w-72 bg-white border-r border-gray-200 shadow-xl flex flex-col z-40 overflow-y-auto">
-            <div class="p-4 bg-slate-50 border-b font-black text-[10px] text-slate-400 tracking-widest uppercase">Toolbox V2.0</div>
+            <div class="p-4 bg-slate-50 border-b font-black text-[10px] text-slate-400 tracking-widest uppercase italic">Versão: King Dev Academy - Civil</div>
             <div class="p-4 space-y-6">
                 <section>
-                    <h4 class="text-blue-500 font-black text-[10px] mb-2 uppercase">Básicos</h4>
-                    <div class="scratch-block bg-[#4c97ff]" onclick="addElement('h1')">Título H1</div>
-                    <div class="scratch-block bg-[#4c97ff]" onclick="addElement('p')">Parágrafo</div>
-                    <div class="scratch-block bg-[#4c97ff]" onclick="addElement('button')">Botão CTA</div>
+                    <h4 class="text-emerald-500 font-black text-[10px] mb-2 uppercase flex items-center gap-1"><i data-lucide="zap" class="w-3 h-3"></i> Automação Scratch</h4>
+                    <div class="scratch-block bg-emerald-500" onclick="addElement('form')">Formulário de Leads</div>
+                    <div class="scratch-block bg-emerald-500" onclick="addElement('counter')">Contador Regressivo</div>
                 </section>
                 <section>
-                    <h4 class="text-purple-500 font-black text-[10px] mb-2 uppercase">Mídia & Interação</h4>
-                    <div class="scratch-block bg-[#9966ff]" onclick="addElement('img')">Imagem URL</div>
-                    <div class="scratch-block bg-[#9966ff]" onclick="addElement('video')">Vídeo Embed</div>
-                    <div class="scratch-block bg-[#9966ff]" onclick="addElement('input')">Campo de Texto</div>
+                    <h4 class="text-blue-500 font-black text-[10px] mb-2 uppercase">UI Clássica</h4>
+                    <div class="scratch-block bg-[#4c97ff]" onclick="addElement('h1')">Título</div>
+                    <div class="scratch-block bg-[#4c97ff]" onclick="addElement('button')">Botão</div>
                 </section>
-                <section>
-                    <h4 class="text-orange-500 font-black text-[10px] mb-2 uppercase">Layout</h4>
-                    <div class="scratch-block bg-[#ffab19]" onclick="addElement('div')">Container (Box)</div>
-                    <div class="scratch-block bg-[#ffab19]" onclick="addElement('hr')">Linha Divisória</div>
-                </section>
+            </div>
+            
+            <div class="mt-auto p-4 border-t bg-slate-50">
+                <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2">Camadas (Layers)</h4>
+                <div id="layer-list" class="space-y-1 max-h-40 overflow-y-auto"></div>
             </div>
         </aside>
 
         <section class="flex-1 bg-slate-200 relative overflow-auto flex items-center justify-center bg-grid p-4">
-            <div id="canvas" class="bg-white canvas-mobile shadow-2xl relative border-[10px] border-slate-900 overflow-hidden transition-all duration-500">
-                </div>
+            <div id="canvas" class="bg-white w-[375px] h-[812px] rounded-[40px] shadow-2xl relative border-[10px] border-slate-900 overflow-hidden transition-all duration-500"></div>
         </section>
 
         <aside class="w-80 bg-white border-l border-gray-200 p-6 z-40 overflow-y-auto">
             <div id="inspector-ui" class="hidden space-y-6">
-                <h3 class="font-black text-slate-800 text-sm border-b pb-4">ESTILIZAÇÃO</h3>
+                <h3 class="font-black text-slate-800 text-sm border-b pb-4 uppercase">Configurar Objeto</h3>
                 
                 <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase">Texto / URL</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase">Conteúdo</label>
                     <input type="text" id="prop-text" oninput="update()" class="w-full bg-slate-50 border rounded-lg p-2 text-sm outline-none">
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase">Fundo</label>
-                        <input type="color" id="prop-bg" oninput="update()" class="w-full h-10 rounded cursor-pointer">
+                <div class="logic-panel">
+                    <label class="text-[10px] font-black text-amber-600 uppercase flex items-center gap-1"><i data-lucide="play-circle" class="w-3 h-3"></i> Ao Clicar (Ação):</label>
+                    <select id="prop-action" onchange="update()" class="w-full mt-2 bg-white border rounded p-1 text-xs font-bold">
+                        <option value="none">Nenhuma</option>
+                        <option value="link">Abrir Link (URL)</option>
+                        <option value="alert">Exibir Mensagem</option>
+                        <option value="scroll">Rolar para Seção</option>
+                    </select>
+                    <input type="text" id="prop-action-val" oninput="update()" placeholder="URL ou Mensagem..." class="w-full mt-2 border rounded p-1 text-xs">
+                </div>
+
+                <div class="pt-4 border-t">
+                    <label class="text-[10px] font-black text-slate-400 uppercase">Posição Z (Camada)</label>
+                    <div class="flex gap-2 mt-1">
+                        <button onclick="changeZ('down')" class="flex-1 bg-slate-100 p-2 rounded hover:bg-slate-200"><i data-lucide="layers-2" class="w-4 h-4 mx-auto"></i></button>
+                        <button onclick="changeZ('up')" class="flex-1 bg-slate-100 p-2 rounded hover:bg-slate-200"><i data-lucide="layers" class="w-4 h-4 mx-auto"></i></button>
                     </div>
-                    <div>
-                        <label class="text-[10px] font-black text-slate-400 uppercase">Texto</label>
-                        <input type="color" id="prop-color" oninput="update()" class="w-full h-10 rounded cursor-pointer">
-                    </div>
                 </div>
 
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase block mb-1">Tamanho da Fonte (px)</label>
-                    <input type="number" id="prop-fontsize" oninput="update()" class="w-full border rounded-lg p-2 text-sm">
-                </div>
-
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase block mb-1">Arredondamento</label>
-                    <input type="range" id="prop-radius" min="0" max="100" oninput="update()" class="w-full accent-blue-500">
-                </div>
-
-                <div>
-                    <label class="text-[10px] font-black text-slate-400 uppercase block mb-1">Opacidade</label>
-                    <input type="range" id="prop-opacity" min="0" max="100" value="100" oninput="update()" class="w-full accent-blue-500">
-                </div>
-
-                <button onclick="remove()" class="w-full py-3 bg-red-50 text-red-500 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white transition-all uppercase">Excluir Elemento</button>
+                <button onclick="remove()" class="w-full py-3 bg-red-50 text-red-500 rounded-xl text-[10px] font-black hover:bg-red-500 hover:text-white transition-all uppercase">Remover Elemento</button>
             </div>
             <div id="no-sel" class="flex flex-col items-center justify-center h-full opacity-20 text-center">
-                <i data-lucide="settings" class="w-12 h-12 mb-2 animate-spin-slow"></i>
-                <p class="text-xs font-bold uppercase tracking-widest">Aguardando Seleção</p>
+                <i data-lucide="brain-circuit" class="w-12 h-12 mb-2"></i>
+                <p class="text-xs font-bold uppercase tracking-widest text-blue-600">IA Pronta para agir</p>
             </div>
         </aside>
     </main>
