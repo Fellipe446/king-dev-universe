@@ -4,14 +4,17 @@ let project = { elements: [], selectedId: null };
 function addElement(type) {
     const el = {
         id: 'king-' + Date.now(),
+        name: type.toUpperCase() + ' #' + (project.elements.length + 1),
         type: type,
-        text: type === 'img' ? 'https://via.placeholder.com/300' : 'Novo Elemento',
-        x: 40, y: 100, w: 280, h: type === 'video' ? 160 : 50,
-        bg: type === 'button' ? '#4c97ff' : (type === 'div' ? '#e2e8f0' : 'transparent'),
-        color: '#1e293b',
-        radius: 8,
+        text: type === 'button' ? 'Clique Aqui' : (type === 'form' ? 'Seu Nome' : 'Novo Título'),
+        x: 40, y: 100, w: 280, h: 50,
+        bg: type === 'button' ? '#4c97ff' : (type === 'form' ? '#ffffff' : 'transparent'),
+        color: type === 'button' ? '#ffffff' : '#1e293b',
+        radius: 12,
         fontSize: 16,
-        opacity: 100
+        zIndex: 10,
+        action: 'none',
+        actionVal: ''
     };
     project.elements.push(el);
     render();
@@ -20,50 +23,50 @@ function addElement(type) {
 
 function render() {
     const canvas = document.getElementById('canvas');
+    const layerList = document.getElementById('layer-list');
     canvas.innerHTML = '';
-    project.elements.forEach(el => {
-        let dom;
-        if (el.type === 'img') {
-            dom = document.createElement('img');
-            dom.src = el.text;
-            dom.style.objectFit = 'cover';
-        } else if (el.type === 'video') {
-            dom = document.createElement('div');
-            dom.innerHTML = `<iframe class="w-full h-full pointer-events-none" src="${el.text.replace('watch?v=', 'embed/')}"></iframe>`;
-            dom.style.background = '#000';
-        } else if (el.type === 'input') {
-            dom = document.createElement('input');
-            dom.placeholder = el.text;
-            dom.className = "px-4 border border-gray-300";
-        } else {
-            dom = document.createElement(el.type === 'button' ? 'button' : (el.type === 'h1' ? 'h1' : 'div'));
-            dom.innerText = el.text;
-            if (el.type === 'h1') dom.style.fontSize = (el.fontSize * 1.5) + 'px';
-        }
+    layerList.innerHTML = '';
 
+    // Ordenar por Z-Index para renderizar corretamente
+    project.elements.sort((a, b) => a.zIndex - b.zIndex).forEach(el => {
+        const dom = document.createElement(el.type === 'button' ? 'button' : 'div');
+        dom.innerText = el.text;
         dom.id = el.id;
-        dom.className += ` absolute flex items-center justify-center cursor-move transition-all ${project.selectedId === el.id ? 'element-selected' : ''}`;
-        dom.style.cssText += `
+        dom.className = `absolute flex items-center justify-center cursor-move transition-shadow ${project.selectedId === el.id ? 'element-selected' : ''}`;
+        
+        dom.style.cssText = `
             left: ${el.x}px; top: ${el.y}px; width: ${el.w}px; height: ${el.h}px;
             background: ${el.bg}; color: ${el.color}; border-radius: ${el.radius}px;
-            font-size: ${el.fontSize}px; opacity: ${el.opacity / 100}; font-weight: bold; overflow: hidden;
+            font-size: ${el.fontSize}px; z-index: ${el.zIndex}; font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         `;
 
-        dom.onmousedown = (e) => {
-            select(el.id);
-            let canvasRect = canvas.getBoundingClientRect();
-            let shiftX = e.clientX - canvasRect.left - el.x;
-            let shiftY = e.clientY - canvasRect.top - el.y;
-
-            document.onmousemove = (ev) => {
-                el.x = Math.round((ev.clientX - canvasRect.left - shiftX) / 10) * 10; // Snap 10px
-                el.y = Math.round((ev.clientY - canvasRect.top - shiftY) / 10) * 10;
-                render();
-            };
-            document.onmouseup = () => document.onmousemove = null;
-        };
+        // Lógica de Movimentação
+        dom.onmousedown = (e) => startDrag(e, el);
         canvas.appendChild(dom);
+
+        // Renderizar Lista de Camadas
+        const li = document.createElement('div');
+        li.className = `text-[10px] p-2 mb-1 rounded flex justify-between cursor-pointer ${project.selectedId === el.id ? 'bg-blue-100 font-bold' : 'bg-white hover:bg-gray-100'}`;
+        li.innerHTML = `<span>${el.name}</span> <i data-lucide="eye" class="w-3 h-3 text-gray-400"></i>`;
+        li.onclick = () => select(el.id);
+        layerList.prepend(li); // Elemento mais alto no topo da lista
     });
+    lucide.createIcons();
+}
+
+function startDrag(e, el) {
+    select(el.id);
+    const canvasRect = document.getElementById('canvas').getBoundingClientRect();
+    let shiftX = e.clientX - canvasRect.left - el.x;
+    let shiftY = e.clientY - canvasRect.top - el.y;
+
+    document.onmousemove = (ev) => {
+        el.x = Math.max(0, Math.min(ev.clientX - canvasRect.left - shiftX, 375 - el.w));
+        el.y = Math.max(0, Math.min(ev.clientY - canvasRect.top - shiftY, 812 - el.h));
+        render();
+    };
+    document.onmouseup = () => document.onmousemove = null;
 }
 
 function select(id) {
@@ -73,39 +76,42 @@ function select(id) {
     document.getElementById('inspector-ui').classList.remove('hidden');
 
     document.getElementById('prop-text').value = el.text;
-    document.getElementById('prop-bg').value = el.bg;
-    document.getElementById('prop-color').value = el.color;
-    document.getElementById('prop-fontsize').value = el.fontSize;
-    document.getElementById('prop-radius').value = el.radius;
-    document.getElementById('prop-opacity').value = el.opacity;
+    document.getElementById('prop-action').value = el.action;
+    document.getElementById('prop-action-val').value = el.actionVal;
     render();
 }
 
 function update() {
     const el = project.elements.find(e => e.id === project.selectedId);
     el.text = document.getElementById('prop-text').value;
-    el.bg = document.getElementById('prop-bg').value;
-    el.color = document.getElementById('prop-color').value;
-    el.fontSize = parseInt(document.getElementById('prop-fontsize').value);
-    el.radius = document.getElementById('prop-radius').value;
-    el.opacity = document.getElementById('prop-opacity').value;
+    el.action = document.getElementById('prop-action').value;
+    el.actionVal = document.getElementById('prop-action-val').value;
     render();
 }
 
-function remove() {
-    project.elements = project.elements.filter(e => e.id !== project.selectedId);
-    project.selectedId = null;
-    document.getElementById('inspector-ui').classList.add('hidden');
-    document.getElementById('no-sel').classList.remove('hidden');
+function changeZ(dir) {
+    const el = project.elements.find(e => e.id === project.selectedId);
+    el.zIndex += (dir === 'up' ? 1 : -1);
     render();
 }
 
-function resize(mode) {
-    const c = document.getElementById('canvas');
-    c.className = `bg-white shadow-2xl relative border-[10px] border-slate-900 overflow-hidden transition-all duration-500 ${mode === 'mobile' ? 'canvas-mobile' : 'canvas-desktop'}`;
-}
-
-function exportProject() {
-    console.log("Exportando JSON do Projeto:", JSON.stringify(project.elements));
-    alert("Código compilado no console! Pronto para o próximo nível.");
+// INTEGRAÇÃO COM BACK-END (RENDER)
+async function saveOnRender() {
+    const statusIA = document.getElementById('status-ia');
+    statusIA.innerText = "IA: SALVANDO PROJETO NO RENDER...";
+    
+    try {
+        const response = await fetch('/api/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(project)
+        });
+        const result = await response.json();
+        alert("✅ Projeto King Dev Academy salvo com sucesso!");
+    } catch (err) {
+        console.log("Erro ao salvar:", err);
+        alert("⚠️ Erro de conexão com o servidor.");
+    } finally {
+        statusIA.innerText = "IA ANALISANDO LAYOUT...";
+    }
 }
