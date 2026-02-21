@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editor Pro | King Dev Universe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: white; }
+        .canvas-bg { background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 20px 20px; }
+        .element-selected { outline: 2px solid #3b82f6; outline-offset: 2px; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+    <header class="h-14 border-b border-white/5 flex items-center justify-between px-6 bg-black/50 backdrop-blur-md">
+        <div class="flex items-center gap-4">
+            <button onclick="location.href='/'" class="text-slate-500 hover:text-white transition-colors"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+            <div class="h-4 w-[1px] bg-white/10"></div>
+            <span class="text-[10px] font-black tracking-widest text-blue-500 uppercase">King Dev Academy / Editor V5</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="saveProject()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded text-[10px] font-black uppercase transition-all">Salvar Projeto</button>
+        </div>
+    </header>
+
+    <main class="flex-1 flex overflow-hidden">
+        <aside class="w-64 bg-black/20 border-r border-white/5 p-4 flex flex-col gap-6">
+            <div>
+                <h4 class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">Toolbox</h4>
+                <div class="space-y-2">
+                    <button onclick="add('h1')" class="w-full flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 text-xs font-bold transition-all"><i data-lucide="heading" class="w-4 h-4 text-blue-500"></i> Título</button>
+                    <button onclick="add('button')" class="w-full flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 text-xs font-bold transition-all"><i data-lucide="mouse-pointer" class="w-4 h-4 text-blue-500"></i> Botão King</button>
+                </div>
+            </div>
+            <div class="mt-auto p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                <p class="text-[9px] font-bold text-blue-400 uppercase tracking-tighter">Status: Sistema King Online</p>
+            </div>
+        </aside>
+
+        <section class="flex-1 canvas-bg flex items-center justify-center p-10 overflow-auto">
+            <div id="canvas" class="bg-white w-[375px] h-[812px] rounded-[40px] shadow-2xl relative border-[8px] border-slate-900 overflow-hidden transition-all duration-300">
+                </div>
+        </section>
+
+        <aside class="w-72 bg-black/20 border-l border-white/5 p-6 overflow-y-auto">
+            <div id="inspector-ui" class="hidden space-y-6">
+                <h3 class="text-xs font-black uppercase tracking-widest text-slate-500 mb-6">Configuração</h3>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 block mb-2 uppercase">Texto do Elemento</label>
+                    <input type="text" id="prop-text" oninput="update()" class="w-full bg-white/5 border border-white/10 rounded p-2 text-sm outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 block mb-2 uppercase">Cor de Fundo</label>
+                    <input type="color" id="prop-bg" oninput="update()" class="w-full h-10 bg-transparent border-none cursor-pointer">
+                </div>
+                <button onclick="remove()" class="w-full py-3 bg-red-500/10 text-red-500 text-[10px] font-black rounded-lg hover:bg-red-500 hover:text-white transition-all">DELETAR ITEM</button>
+            </div>
+            <div id="no-sel" class="flex flex-col items-center justify-center h-full opacity-20 text-center">
+                <i data-lucide="mouse-pointer-2" class="w-10 h-10 mb-4"></i>
+                <p class="text-[10px] font-black uppercase">Selecione para editar</p>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        lucide.createIcons();
+        let project = { elements: [], selectedId: null };
+
+        function add(type) {
+            const el = {
+                id: 'k-' + Date.now(),
+                type,
+                text: type === 'h1' ? 'Título Elite' : 'Botão Pro',
+                x: 50, y: 50, w: 275, h: 50,
+                bg: type === 'button' ? '#3b82f6' : 'transparent',
+                color: type === 'button' ? '#ffffff' : '#020617'
+            };
+            project.elements.push(el);
+            render();
+            select(el.id);
+        }
+
+        function render() {
+            const canvas = document.getElementById('canvas');
+            canvas.innerHTML = '';
+            project.elements.forEach(el => {
+                const dom = document.createElement(el.type === 'button' ? 'button' : 'h1');
+                dom.innerText = el.text;
+                dom.className = `absolute flex items-center justify-center cursor-move transition-all ${project.selectedId === el.id ? 'element-selected' : ''}`;
+                dom.style.cssText = `left:${el.x}px; top:${el.y}px; width:${el.w}px; height:${el.h}px; background:${el.bg}; color:${el.color}; font-weight:800; border-radius:12px; font-size: 14px;`;
+                
+                dom.onmousedown = (e) => {
+                    select(el.id);
+                    let rect = canvas.getBoundingClientRect();
+                    let ox = e.clientX - rect.left - el.x;
+                    let oy = e.clientY - rect.top - el.y;
+                    document.onmousemove = (ev) => {
+                        el.x = ev.clientX - rect.left - ox;
+                        el.y = ev.clientY - rect.top - oy;
+                        render();
+                    };
+                    document.onmouseup = () => document.onmousemove = null;
+                };
+                canvas.appendChild(dom);
+            });
+        }
+
+        function select(id) {
+            project.selectedId = id;
+            const el = project.elements.find(e => e.id === id);
+            document.getElementById('no-sel').classList.add('hidden');
+            document.getElementById('inspector-ui').classList.remove('hidden');
+            document.getElementById('prop-text').value = el.text;
+            document.getElementById('prop-bg').value = el.bg;
+            render();
+        }
+
+        function update() {
+            const el = project.elements.find(e => e.id === project.selectedId);
+            el.text = document.getElementById('prop-text').value;
+            el.bg = document.getElementById('prop-bg').value;
+            render();
+        }
+
+        function remove() {
+            project.elements = project.elements.filter(e => e.id !== project.selectedId);
+            project.selectedId = null;
+            render();
+        }
+
+        async function saveProject() {
+            await fetch('/api/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(project)
+            });
+            alert("✅ SUCESSO: Projeto King Dev salvo!");
+        }
+    </script>
+</body>
+</html>
